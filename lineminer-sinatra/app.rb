@@ -39,4 +39,5 @@ class LineMiner < Sinatra::Base
     response.strip
   end
 
+  run! if app_file == $PROGRAM_NAME
 end
