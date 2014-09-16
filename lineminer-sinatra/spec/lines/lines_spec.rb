@@ -25,8 +25,13 @@ describe 'lines' do
         it { expect(last_response.status).to eq 413 }
       end
 
-      context 'that is not an integer' do
+      context 'that is not a string' do
         before { get 'lines/10a' }
+        it { expect(last_response.status).to eq 413 }
+      end
+
+      context 'that is a decimal' do
+        before { get 'lines/10.4' }
         it { expect(last_response.status).to eq 413 }
       end
     end
