@@ -5,11 +5,17 @@ require 'bundler'
 Bundler.require :default, ENV['RACK_ENV'].to_sym
 
 # Miner serving lines out of a file to network clients
-# First line has index 1
 #
-# Example request:
-# /lines/4
-# returns 4th line from file
+#
+#   Possible request:
+#   GET /lines/:line
+#
+#   Example valid:
+#   GET /lines/4
+#   returns 4th line from provided datafile
+#
+#   Line index starts from 1.
+#   Negative a non-integer parameters not allowed.
 class LineMiner < Sinatra::Base
   set :root, File.dirname(__FILE__)
 
