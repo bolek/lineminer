@@ -54,13 +54,13 @@
 
     Possible upgrades:
         - Load data file into a database (e.g. Redis, key - line index, value - line text) that allows sharding (we can add servers as the file grows) - this would however require a slower startup; We could utilize Redis for line lookup.
-        - If required more concurrent users, would either need to introduce a load balance (heroku might be a quick solution) or port to a solution utilizing node.js or both; For me it feels like a good fit for node.js.
+        - If required more concurrent users, would either need to introduce a load balancer (heroku or similar might be a quick solution) or port to a solution utilizing node.js or both; For me it feels like a good fit for node.js.
 
     Integrate with additional tools
     1. Add NewRelic for identifying bottlenecks (IO, web server, DB etc.)
-    2. Automtize performance benchmarks + do proper fix for random GET requests issue
+    2. Automate performance benchmarks + do proper fix for random GET requests issue
 
-    Prioritization really depends what are the pain points and needs. More concurrent users vs larger files or both. Another question where geographically users are. It also might be interesing to know if there are lines that are requested more often then ours - might be a could case for cacheing.
+    Prioritization really depends what are the pain points and needs. More concurrent users vs larger files or both. Another question where geographically users are. It also might be interesing to know if there are lines that are requested more often than others - might be a could case for caching.
 
 7. Performance Tests Results
 Hardware used: Macbook Pro 8GB RAM, 2.6GHz Intel Core i5
