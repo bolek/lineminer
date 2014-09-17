@@ -1,0 +1,100 @@
+1. How the system works?
+    a. Naive miner
+        Read lines one by one until reaches index line unless reaches EOF sooner.
+
+        Limitations:   ~4K limit of open files
+                            requires slow IO operations
+                            need to iterate through file (the larger the slower)
+
+    b. Position miner
+        Read into memory line positions. When requested line - lookup byte position in array and read from file with offset
+
+        Limitation: ~4K limit of open files
+                        requires slow IO operations
+
+2. How will the system perform with a 1GB file? a 10GB file? a 100GB file?
+
+3. How will your system perform with 100 users? 10000 users? 1000000 users?
+
+4. What documentation, websites, papers, etc did you consult in doing this assignment?
+
+5. What third-party libraries or other tools does the system use? Why did you choose each framework you used?
+    * Sinatra
+    * api-benchmark
+
+6. How long did you spend on this exercise? If you had unlimited more time to spend on this, how would you spend it and how would you prioritize each item?
+
+    Spent: 2-3hours analyzing different options;
+              1-2 hours for setting up the project + naive solution with specs;
+              3-4 hours to hack api-benchmarks
+
+    Further Improvements:
+    1. Add NewRelic for identifying bottlenecks (IO, web server, DB etc.)
+    2. Investigate use of a db (e.g. Redis)
+
+7. Performance Tests Results
+Hardware used: Macbook Pro 8GB RAM, 2.6GHz Intel Core i5
+Tests 1-4 were on Webrick (max clients=100). I was able to get to 135 concurrent requests on benchmark-api.
+
+    Test 1 (benchmarks/reports/test1_results.html)
+        method: NaiveMiner
+        File size: 330MB
+        runs: 1856
+        concurrency: 100
+        server: webrick
+
+        Results
+        19.25 ops/sec +- 2.67%
+        Distribution (response time)
+            75% Percentile: 7.796340
+            95% Percentile: 10.203067
+            99% Percentile: 11.076514
+            99.9% Percentile: 12.290928
+
+    Test 2 (benchmarks/reports/test2_results.html)
+        method: NaiveMiner
+        File size: 1.3GB
+        runs: 12
+        concurrency: 100
+        server: webrick
+
+        Results
+        2.46 ops/sec ± 48.79%
+        Distribution (response time)
+            75% Percentile: 60.211017
+            95% Percentile: 109.267912
+            99% Percentile: 109.267912
+            99.9% Percentile: 109.267912
+
+    Test 3 (benchmarks/reports/test3_results.html)
+        method: PositionMiner
+        File size: 1.3GB
+        runs: 10000
+        concurrency: 100
+        server: webrick
+
+        Results
+        RAM usage ~ 130MB
+        386.96 ops/sec ± 0.61%
+        Distribution (response time)
+            75% Percentile: 0.302875
+            95% Percentile: 0.406940
+            99% Percentile: 0.500236
+            99.9% Percentile: 0.627263
+
+    Test 4 (benchmarks/reports/test4_results.html)
+        method: PositionMiner
+        File size: 3.96GB
+        runs: 10000
+        concurrency: 100
+        server: webrick
+
+        Results
+        RAM usage ~ 266MB
+        368.04 ops/sec ± 0.61% (memory swaping after 1000 runs)
+        Distribution (response time)
+            75% Percentile: 0.324960
+            95% Percentile: 0.425508
+            99% Percentile: 0.492883
+            99.9% Percentile: 0.583185
+
