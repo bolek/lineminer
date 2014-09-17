@@ -15,6 +15,8 @@
 
         PositionMiner strategy is obviously significantly faster.
 
+    Run tests from limeminer-sinatra by calling rspec.
+
 2. How will the system perform with a 1GB file? a 10GB file? a 100GB file?
     Check out performance test results below. I got to 4GB without the need for memory swaping. My computer though has quite a few backgroud processes.
     The overall ruby RAM usage was pretty low (~280MB) while using PositionMiner.
