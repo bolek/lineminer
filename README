@@ -2,35 +2,63 @@
     a. Naive miner
         Read lines one by one until reaches index line unless reaches EOF sooner.
 
-        Limitations:   ~4K limit of open files
+        Limitations:   ~4K limit of open files at once
                             requires slow IO operations
                             need to iterate through file (the larger the slower)
 
     b. Position miner
         Read into memory line positions. When requested line - lookup byte position in array and read from file with offset
 
-        Limitation: ~4K limit of open files
+        Limitation: ~4K limit of open files at once
                         requires slow IO operations
+                        requires more memory when lines are short (since we create an array size of number of lines)
+
+        PositionMiner strategy is obviously significantly faster.
 
 2. How will the system perform with a 1GB file? a 10GB file? a 100GB file?
+    Check out performance test results below. I got to 4GB without the need for memory swaping. My computer though has quite a few backgroud processes.
+    The overall ruby RAM usage was pretty low (~280MB) while using PositionMiner.
+    PositionMiner strategy requires memory allocation to cache position of each line. At 100GB I would fear there might be an issue with it. To decrease the line_positions array we could use a strategy that mixes NaiveMiner and PositionMiner.
 
 3. How will your system perform with 100 users? 10000 users? 1000000 users?
 
+    I got api-benchmark to work upto 135 concurrent requests before connections would be killed. It's probably a MAX_CLIENT configuration on the server side. However, noticed same results when using Puma and Webrick.
+
 4. What documentation, websites, papers, etc did you consult in doing this assignment?
+    http://www.sinatrarb.com/ (I actually never used sinatra before)
+    https://github.com/puma/puma
+    http://nodejs.org/
+    http://expressjs.com/
+    http://redis.io/
+    http://stackoverflow.com/
+    manual bash
 
 5. What third-party libraries or other tools does the system use? Why did you choose each framework you used?
-    * Sinatra
-    * api-benchmark
+    * Sinatra - I am familiar with Rails, however found it too heavy for the task. Decided to try out Sinatra. I also took a shot with node.js but didn't have the time to make a working prototype;
+    * api-benchmark - for performance tests
 
 6. How long did you spend on this exercise? If you had unlimited more time to spend on this, how would you spend it and how would you prioritize each item?
 
     Spent: 2-3hours analyzing different options;
               1-2 hours for setting up the project + naive solution with specs;
-              3-4 hours to hack api-benchmarks
+              3-4 hours to hack api-benchmarks (couldn't test GET requests with random paramters out of the box)
+              1-2 hours setting up puma + running tests + documentation
 
     Further Improvements:
+    Critical limitations of the system are
+        - limit of open files (4K)
+        - slow IO operations
+        - position_lines array will not scale well with growth of file
+
+    Possible upgrades:
+        - Load data file into a database (e.g. Redis, key - line index, value - line text) that allows sharding (we can add servers as the file grows) - this would however require a slower startup; We could utilize Redis for line lookup.
+        - If required more concurrent users, would either need to introduce a load balance (heroku might be a quick solution) or port to a solution utilizing node.js or both; For me it feels like a good fit for node.js.
+
+    Integrate with additional tools
     1. Add NewRelic for identifying bottlenecks (IO, web server, DB etc.)
-    2. Investigate use of a db (e.g. Redis)
+    2. Automtize performance benchmarks + do proper fix for random GET requests issue
+
+    Prioritization really depends what are the pain points and needs. More concurrent users vs larger files or both. Another question where geographically users are. It also might be interesing to know if there are lines that are requested more often then ours - might be a could case for cacheing.
 
 7. Performance Tests Results
 Hardware used: Macbook Pro 8GB RAM, 2.6GHz Intel Core i5
@@ -98,3 +126,34 @@ Tests 1-4 were on Webrick (max clients=100). I was able to get to 135 concurrent
             99% Percentile: 0.492883
             99.9% Percentile: 0.583185
 
+    Test 5 (benchmarks/reports/test5_results.html)
+        method: PositionMiner
+        File size: 1.3GB
+        runs: 10000
+        concurrency: 100
+        server: puma
+
+        Results
+        RAM usage ~ 124MB
+        1,285.04 ops/sec ± 0.77%
+        Distribution (response time)
+            75% Percentile: 0.085449
+            95% Percentile: 0.105350
+            99% Percentile: 0.328652
+            99.9% Percentile: 0.341814 (memory swapping involved)
+
+    Test 6 (benchmarks/reports/test6_results.html)
+        method: PositionMiner
+        File size: 3.96GB
+        runs: 10000
+        concurrency: 100
+        server: puma
+
+        Results
+        RAM usage ~ 280MB
+        1,149.66 ops/sec ± 0.71%
+        Distribution (response time)
+            75% Percentile: 0.122493
+            95% Percentile: 0.140110
+            99% Percentile: 0.156028
+            99.9% Percentile: 0.173394
