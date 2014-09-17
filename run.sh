@@ -15,4 +15,5 @@ echo $1
 cp $1 lineminer-sinatra/assets/datafile
 
 cd lineminer-sinatra
-ruby app.rb
+export RACK_ENV='production'
+ruby app.rb -s Puma

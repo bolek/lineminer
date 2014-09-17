@@ -2,6 +2,9 @@
 ENV['RACK_ENV'] ||= 'development'
 
 require 'bundler'
+require 'sinatra'
+configure { set :server, :puma }
+
 require_relative 'lib/naive_miner'
 require_relative 'lib/position_miner'
 
