@@ -10,3 +10,4 @@ mining_strategy: PositionMiner
 datafile:
     production: #{datafile_production}
     development: #{datafile_development}
+    test: spec/fixtures/datafile_test
