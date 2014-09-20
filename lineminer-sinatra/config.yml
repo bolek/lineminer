@@ -1,0 +1,13 @@
+#
+# Mining Strategy
+# Two available: PositionMiner, NaiveMiner
+#
+mining_strategy: PositionMiner
+
+#
+# datafile path relative to app root
+#
+datafile:
+    production: 'assets/datafile'
+    development: 'assets/datafile_test'
+    test: 'assets/datafile_test'

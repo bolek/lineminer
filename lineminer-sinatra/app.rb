@@ -22,11 +22,11 @@ configure { set :server, :puma }
 #   Line index starts from 1.
 #   Only positive index integers allowed
 class LineMiner < Sinatra::Base
+  register Sinatra::ConfigFile
+  config_file 'config.yml'
+
   set :root, File.dirname(__FILE__)
-  set :datafile,
-    ENV['RACK_ENV'] == 'test' ? "#{settings.root}/assets/datafile_test" : "#{settings.root}/assets/datafile"
-  set :mining_strategy, PositionMiner
-  set :miner, settings.mining_strategy.new(settings.datafile)
+  set :miner, settings.mining_strategy.constantize.new(settings.datafile)
 
   get '/lines/:line' do
     resolve_request
