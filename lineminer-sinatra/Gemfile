@@ -7,9 +7,10 @@ gem 'puma'
 
 group :test, :development do
   gem 'rake'
-  gem 'rspec'
 end
 
 group :test do
   gem 'rack-test'
+  gem 'rspec', '3.1.0'
+  gem 'rspec-mocks', '3.1.1'
 end
