@@ -41,7 +41,7 @@ class LineMiner < Sinatra::Base
   end
 
   def line_index_valid?(line)
-    /\A\d+\z/ === line && line.to_i > 0
+    line =~ /\A\d+\z/ && line.to_i > 0
   end
 
   run! if app_file == $PROGRAM_NAME
