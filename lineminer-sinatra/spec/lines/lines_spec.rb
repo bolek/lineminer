@@ -8,10 +8,26 @@ describe 'lines' do
 
   describe 'GET /lines' do
     context 'when provided with a valid integer line parameter' do
-      before { get '/lines/2' }
+      context 'for first line' do
+        before { get '/lines/1' }
 
-      it { expect(last_response.status).to eq 200 }
-      it { expect(last_response.body).to eq 'has some data' }
+        it { expect(last_response.status). to eq 200 }
+        it { expect(last_response.body).to eq 'datafile' }
+      end
+
+      context 'for last line' do
+        before { get '/lines/4' }
+
+        it { expect(last_response.status). to eq 200 }
+        it { expect(last_response.body).to eq 'for testing' }
+      end
+
+      context 'for a line somewhere inside' do
+        before { get '/lines/2' }
+
+        it { expect(last_response.status).to eq 200 }
+        it { expect(last_response.body).to eq 'has some data' }
+      end
     end
 
     context 'when provided with an invalid parameter' do
