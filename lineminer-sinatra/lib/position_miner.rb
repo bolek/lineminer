@@ -1,5 +1,5 @@
 require_relative 'miner'
-# Find lines in file by looking up there byte offset
+# Find lines in file by looking up their byte offset
 class PositionMiner < Miner
   def initialize(file)
     super
