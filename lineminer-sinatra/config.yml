@@ -10,4 +10,4 @@ mining_strategy: PositionMiner
 datafile:
     production: 'assets/datafile'
     development: 'assets/datafile_test'
-    test: 'assets/datafile_test'
+    test: 'spec/fixtures/datafile_test'
