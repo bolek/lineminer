@@ -21,7 +21,7 @@ Bundler.require :default, ENV['RACK_ENV'].to_sym
 #   returns 4th line from provided datafile
 #
 #   Line index starts from 1.
-#   Negative a non-integer parameters not allowed.
+#   Only positive index integers allowed
 class LineMiner < Sinatra::Base
   set :root, File.dirname(__FILE__)
   set :datafile,
@@ -34,11 +34,14 @@ class LineMiner < Sinatra::Base
   end
 
   def resolve_request
-    line_index = Integer(params[:line])
-    return 413 if line_index < 0
-    settings.miner.find_line(line_index)
+    return 400 unless line_index_valid?(params[:line])
+    settings.miner.find_line(params[:line].to_i)
     rescue ArgumentError, EOFError, TypeError
       return 413
+  end
+
+  def line_index_valid?(line)
+    /\A\d+\z/ === line && line.to_i > 0
   end
 
   run! if app_file == $PROGRAM_NAME

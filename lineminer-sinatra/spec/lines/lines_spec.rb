@@ -36,19 +36,24 @@ describe 'lines' do
         it { expect(last_response.status).to eq 413 }
       end
 
+      context 'that is 0' do
+        before { get 'lines/0' }
+        it { expect(last_response.status).to eq 400 }
+      end
+
       context 'that is a negative integer' do
         before { get 'lines/-10' }
-        it { expect(last_response.status).to eq 413 }
+        it { expect(last_response.status).to eq 400 }
       end
 
       context 'that is not a string' do
         before { get 'lines/10a' }
-        it { expect(last_response.status).to eq 413 }
+        it { expect(last_response.status).to eq 400 }
       end
 
       context 'that is a decimal' do
         before { get 'lines/10.4' }
-        it { expect(last_response.status).to eq 413 }
+        it { expect(last_response.status).to eq 400 }
       end
     end
   end
