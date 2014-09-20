@@ -36,7 +36,7 @@ class LineMiner < Sinatra::Base
   def resolve_request
     return 400 unless line_index_valid?(params[:line])
     settings.miner.find_line(params[:line].to_i)
-    rescue ArgumentError, EOFError, TypeError
+    rescue Miner::OutOfRange
       return 413
   end
 
