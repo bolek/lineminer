@@ -1,10 +1,12 @@
 # Find line in file be reading one by one from top
-module NaiveMiner
-  def self.init
+class NaiveMiner
+
+  def initialize(file)
+    @file = file
   end
 
-  def self.find_line(index, file)
-    f = File.open(file, 'r')
+  def find_line(index)
+    f = File.open(@file, 'r')
     response = ''
     index.times do
       if f.eof?

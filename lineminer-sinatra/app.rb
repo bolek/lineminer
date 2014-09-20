@@ -26,8 +26,8 @@ class LineMiner < Sinatra::Base
   set :root, File.dirname(__FILE__)
   set :datafile,
     ENV['RACK_ENV'] == 'test' ? "#{settings.root}/assets/datafile_test" : "#{settings.root}/assets/datafile"
-
-    set :mining_strategy, PositionMiner
+  set :mining_strategy, PositionMiner
+  set :miner, settings.mining_strategy.new(settings.datafile)
 
   get '/lines/:line' do
     resolve_request
@@ -36,12 +36,10 @@ class LineMiner < Sinatra::Base
   def resolve_request
     line_index = Integer(params[:line])
     return 413 if line_index < 0
-    settings.mining_strategy.find_line(line_index, settings.datafile)
+    settings.miner.find_line(line_index)
     rescue ArgumentError, EOFError, TypeError
       return 413
   end
-
-  settings.mining_strategy.init(settings.datafile)
 
   run! if app_file == $PROGRAM_NAME
 end
