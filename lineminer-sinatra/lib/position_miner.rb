@@ -1,25 +1,22 @@
+require_relative 'miner'
 # Find lines in file by looking up there byte offset
-class PositionMiner
-
+class PositionMiner < Miner
   def initialize(file)
-    @file = file
-    @line_positions = []
+    super
 
-    f = File.open(file, 'r')
-    i = 0
-    until f.eof?
-      @line_positions[i] = f.pos
-      i += 1
-      f.readline
+    @line_positions = []
+    @line_positions[0] = 0
+
+    read_file do |f|
+      f.each_line { @line_positions[f.lineno] = f.pos }
     end
-    f.close
   end
 
   def find_line(index)
-    f = File.open(@file, 'r')
-    f.pos = @line_positions[index - 1]
-    result = f.readline.strip
-    f.close
-    result
+    fail OutOfRange if index > @line_positions.size - 1
+    read_file do |f|
+      f.pos = @line_positions[index - 1]
+      f.readline.strip
+    end
   end
 end

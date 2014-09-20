@@ -1,21 +1,13 @@
+require_relative 'miner'
 # Find line in file be reading one by one from top
-class NaiveMiner
-
-  def initialize(file)
-    @file = file
-  end
-
+class NaiveMiner < Miner
   def find_line(index)
-    f = File.open(@file, 'r')
-    response = ''
-    index.times do
-      if f.eof?
-        f.close
-        fail EOFError
-      end
-      response =  f.readline.to_s
+    read_file do |f|
+      enumerator = f.each_line
+      (index - 1).times { enumerator.next }
+      enumerator.next.strip
     end
-    f.close
-    response.strip
+  rescue StopIteration
+    raise OutOfRange
   end
 end
