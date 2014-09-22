@@ -1,7 +1,13 @@
 require_relative 'spec_helper'
 
-describe 'LineMiner' do
+describe LineMiner do
+  let(:file_lines) { File.readlines(subject.settings.datafile) }
+
   describe 'lines' do
+    def get_line(index)
+      file_lines[index - 1].strip
+    end
+
     describe 'GET /' do
       before { get '/' }
       it { expect(last_response.status).to eq 404 }
@@ -13,21 +19,21 @@ describe 'LineMiner' do
           before { get '/lines/1' }
 
           it { expect(last_response.status). to eq 200 }
-          it { expect(last_response.body).to eq 'datafile' }
+          it { expect(last_response.body).to eq get_line(1) }
         end
 
         context 'for last line' do
-          before { get '/lines/4' }
+          before { get "/lines/#{ file_lines.size }" }
 
           it { expect(last_response.status). to eq 200 }
-          it { expect(last_response.body).to eq 'for testing' }
+          it { expect(last_response.body).to eq get_line(file_lines.size) }
         end
 
         context 'for a line somewhere inside' do
           before { get '/lines/2' }
 
           it { expect(last_response.status).to eq 200 }
-          it { expect(last_response.body).to eq 'has some data' }
+          it { expect(last_response.body).to eq get_line(2) }
         end
       end
 
