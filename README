@@ -1,3 +1,20 @@
+V2 Updates
+
+- Miner(s)
+    - avoid using class level variables
+    - DRY code
+    - Introduced custom errors to avoid using generic exceptions
+    - Added boundary tests
+    - Move test datafile to spec/fixtures
+- App
+    - initiate a instance of a Miner on server start
+    - refactor/simplify GET controller
+    - move configuration to config.yml
+    - return more meaningful HTTP errors
+- run.sh
+    - do not copy datafile
+    - generate config file with provided path to datafile
+
 1. How the system works?
     a. Naive miner
         Read lines one by one until reaches index line unless reaches EOF sooner.
